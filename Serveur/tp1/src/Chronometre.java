@@ -10,36 +10,22 @@ public final class Chronometre{
     }
  
     public long getTime() {
-        return end-begin;
+        return fin-debut;
     }
  
     public long getMilliseconds() {
-        return end-begin;
+        return fin-debut;
     }
  
     public double getSeconds() {
-        return (end - begin) / 1000.0;
+        return (fin - debut) / 1000.0;
     }
  
     public double getMinutes() {
-        return (end - begin) / 60000.0;
+        return (fin - debut) / 60000.0;
     }
  
     public double getHours() {
-        return (end - begin) / 3600000.0;
-    }
- 
-    public static void main(String[] arg) {
-        Chronometer ch = new Chronometer();
- 
-        ch.start();
-        for (int i = 1;i<10000000;i++) {}
-        ch.stop();
-        System.out.println(ch.getTime());
- 
-        ch.start();
-        for (int i = 10000000;i>0;i--) {}
-        ch.stop();
-        System.out.println(ch.getTime());
+        return (fin - debut) / 3600000.0;
     }
 }
