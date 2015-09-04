@@ -1,7 +1,7 @@
 import java.awt.List;
 
 
-public class ListeDesMatches{
+public class ListeDesMatches extends List{
 
 	/**
 	 * 

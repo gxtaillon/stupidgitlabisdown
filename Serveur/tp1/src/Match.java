@@ -45,6 +45,9 @@ public class Match {
 	public Match(Equipe e1, Equipe e2) {
 		equipes[0] =e1;
 		equipes[1] =e2;
+		buts[0] =buts[1] =0;
+		pointage[0] =pointage[1] =0;
+		penalites[0] =penalites[1] =0;
 		chronometre.demarer();
 	}
 
