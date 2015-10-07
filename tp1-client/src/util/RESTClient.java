@@ -1,4 +1,6 @@
 package util;
+import gxt.common.Either;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,14 +14,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class RESTClient {
-	public static <R> EitherWhy<Object, R, String> get
+	public static <R> Either<Object, R> get
 			( String uri // where to request
 			, Class<R> rclass // class of the object to get
 			) {
 		return readwrite(uri, "GET", rclass, null);
 	}
 	
-	private static <R, W> EitherWhy<Object, R, String> readwrite
+	private static <R, W> Either<Object, R> readwrite
 			( String uri // where to request
 			, String method //GET,PUT,etc.
 			, Class<R> rclass // class of the object to read
@@ -45,28 +47,28 @@ public class RESTClient {
 	        
 	        int rc = connection.getResponseCode();
 	        if (rc != 200) {
-	        	return EitherWhy.<Object, R, String>Left(
+	        	return Either.<Object, R>Left(
 	        			rc, "HTTP response code is not 200.");
 	        }
 	        InputStream is = connection.getInputStream();
 	        sc = new Scanner(is).useDelimiter("\\A");
 	        if (!sc.hasNext()) {
-	        	return EitherWhy.<Object, R, String>Left(
+	        	return Either.<Object, R>Left(
 	        			null, "HTTP response is empty.");
 	        }
 	        String json = sc.next();
 	        System.out.println(json);
 			R ms = gson.fromJson(json, rclass);
-	    	return EitherWhy.<Object, R, String>Right(
+        	return Either.<Object, R>Right(
 	    			ms, "Successful query.");
 		} catch (JsonSyntaxException e) {
-        	return EitherWhy.<Object, R, String>Left(
+        	return Either.<Object, R>Left(
         			e, "Thrown JsonSyntaxException.");
 		} catch (MalformedURLException e) {
-        	return EitherWhy.<Object, R, String>Left(
+        	return Either.<Object, R>Left(
         			e, "Thrown MalformedURLException.");
 		} catch (IOException e) {
-        	return EitherWhy.<Object, R, String>Left(
+        	return Either.<Object, R>Left(
         			e, "Thrown IOException.");
 		} finally {
 			if (connection != null) {
