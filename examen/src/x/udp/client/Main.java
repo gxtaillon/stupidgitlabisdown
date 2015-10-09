@@ -7,17 +7,22 @@ import gxt.common.Challenge;
 import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
+import x.dispatch.ContainerContainer;
 import x.transport.Boat;
+import x.transport.Cargo;
+import x.transport.SenderReceiver;
 import x.udp.DatagramSenderReceiver;
 
 public class Main {
 
 	public static void main(String[] args) {
-		Challenge mboat = Challenge.Maybe(DatagramSenderReceiver.Start(13371), 
-			new Func1<DatagramSenderReceiver, Challenge>() {
-				public Challenge func(DatagramSenderReceiver dsr) {
+		SenderReceiver sr = new DatagramSenderReceiver(13371);
+		Challenge mboat = Challenge.Maybe(sr.start(), 
+			new Func1<SenderReceiver, Challenge>() {
+				public Challenge func(SenderReceiver dsr) {
 					try {
-						return dsr.send(new Boat(), InetAddress.getLocalHost(), 13370);
+						Cargo c = new Cargo(0L, Boat.class, new Boat());
+						return dsr.send(c, InetAddress.getLocalHost(), 13370);
 					} catch (UnknownHostException e) {
 						return Challenge.Failure(ExceptionExtension.stringnify(e));
 					}

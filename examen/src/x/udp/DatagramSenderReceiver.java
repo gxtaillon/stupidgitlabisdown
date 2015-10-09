@@ -3,7 +3,6 @@ package x.udp;
 import gxt.common.Challenge;
 import gxt.common.Func1;
 import gxt.common.Maybe;
-import gxt.common.Tup0;
 import gxt.common.extension.ExceptionExtension;
 
 import java.io.IOException;
@@ -14,22 +13,27 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import x.transport.Marshall;
+import x.transport.SenderReceiver;
 
-public class DatagramSenderReceiver {
+public class DatagramSenderReceiver implements SenderReceiver {
 	DatagramSocket ds;
+	int listenPort;
 	
-	protected DatagramSenderReceiver() {}
+	public DatagramSenderReceiver(int listenPort) {
+		this.listenPort = listenPort;
+	}
 	
-	public static Maybe<DatagramSenderReceiver> Start(int listenPort) {
+	@Override
+	public Maybe<SenderReceiver> start() {
 		try {
-			DatagramSenderReceiver r = new DatagramSenderReceiver();
-			r.ds = new DatagramSocket(listenPort);
-			return Maybe.<DatagramSenderReceiver>Just(r, "sender ready");
+			ds = new DatagramSocket(listenPort);
+			return Maybe.<SenderReceiver>Just(this, "DatagramSenderReceiver ready");
 		} catch (SocketException e) {
-			return Maybe.<DatagramSenderReceiver>Nothing(ExceptionExtension.stringnify(e));
+			return Maybe.<SenderReceiver>Nothing(ExceptionExtension.stringnify(e));
 		}
 	}
 	
+	@Override
 	public <Ta extends Serializable> Challenge send(Ta a, final InetAddress sendAddr, final int sendPort) {
 		Maybe<byte[]> mbuf = Marshall.toBytes(a);
 		return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
@@ -45,6 +49,7 @@ public class DatagramSenderReceiver {
 		});
 	}
 	
+	@Override
 	public <Ta extends Serializable> Maybe<Ta> receive(Class<Ta> ac) {
 		byte[] buf = new byte[1024];
 		DatagramPacket dp = new DatagramPacket(buf, buf.length);
