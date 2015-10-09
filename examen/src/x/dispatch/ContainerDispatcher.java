@@ -9,8 +9,6 @@ import gxt.common.extension.HashMapExtension;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import x.transport.Cargo;
-
 public class ContainerDispatcher <Tc extends ContainerContainer> implements Dispatcher<Tc> {
 	HashMap<Class<?>, ArrayList<Receiver<Tc>>> receivers;
 	

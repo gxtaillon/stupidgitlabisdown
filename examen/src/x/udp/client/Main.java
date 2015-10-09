@@ -5,9 +5,7 @@ import java.net.UnknownHostException;
 
 import gxt.common.Challenge;
 import gxt.common.Func1;
-import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
-import x.dispatch.ContainerContainer;
 import x.transport.Boat;
 import x.transport.Cargo;
 import x.transport.SenderReceiver;
