@@ -1,1 +1,1 @@
-include ':app-tp2', ':libcommon', ':app-tp1'
+include ':libcommon', ':app-tp1', ':app-tp2'

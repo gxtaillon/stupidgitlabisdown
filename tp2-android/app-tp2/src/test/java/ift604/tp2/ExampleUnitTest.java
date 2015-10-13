@@ -1,4 +1,4 @@
-package ift604_a2015.udes.tp2;
+package ift604.tp2;
 
 import org.junit.Test;
 
