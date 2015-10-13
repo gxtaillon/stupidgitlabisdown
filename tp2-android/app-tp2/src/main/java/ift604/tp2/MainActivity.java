@@ -8,8 +8,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    protected Integer count = 0;
+    protected ListView listViewMatch;
+    protected ArrayList<String> arrayListMatch;
+    protected ArrayAdapter<String> arrayAdapterMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +34,24 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+        Button buttonRefresh = (Button) findViewById(R.id.buttonRefresh);
+        listViewMatch = (ListView) findViewById(R.id.listViewMatch);
+        arrayListMatch = new ArrayList<>();
+        arrayAdapterMatch = new ArrayAdapter<String>(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item, arrayListMatch);
+        listViewMatch.setAdapter(arrayAdapterMatch);
+        listViewMatch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int index, long longIndex) {
+                setContentView(R.layout.activity_dummy);
+            }
+        });
+        buttonRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                arrayListMatch.add("««adadasdasd");
+                arrayAdapterMatch.notifyDataSetChanged();
             }
         });
     }
