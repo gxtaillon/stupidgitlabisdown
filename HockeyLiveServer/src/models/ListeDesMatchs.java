@@ -15,7 +15,7 @@ public class ListeDesMatchs {
 		return instance;
 	}
 
-	public void add(Match m) {
+	public synchronized void add(Match m) {
 		if (matchs.size() >= 10) {
 			return;
 		}
