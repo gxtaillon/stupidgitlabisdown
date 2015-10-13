@@ -8,7 +8,9 @@ import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.Tup0;
 import gxt.common.lispite.Command;
+import gxt.common.lispite.CommandFactory;
 import gxt.common.lispite.InputDispatcher;
+import gxt.common.lispite.TokenGroup;
 import gxt.common.lispite.wip.EchoCommandFactory;
 import gxt.common.lispite.wip.ExitCommandFactory;
 import ift604.common.dispatch.ContainerDispatcher;
@@ -49,10 +51,26 @@ public class Main {
         InputDispatcher id = new InputDispatcher();
         id.addFactory("exit", new ExitCommandFactory());
         id.addFactory("getBoat", new GetBoatCommandFactory(sr));
+        id.addFactory("countBoats", new CommandFactory() {
+            @Override
+            public Maybe<Command> make(TokenGroup group) {
+                if (group.getGroup().length == 0) {
+                    return Maybe.<Command>Just(new Command() {
+                        @Override
+                        public Maybe<Object> func() {
+                            return Maybe.<Object>Just(currentState.boatsReceived, "got this many boats");
+                        }
+                    }, "made countBoats command");
+                } else {
+                    return Maybe.<Command>Nothing("count boats command expects no argument");
+                }
+            }
+        });
         Maybe<Command> c;
         Scanner sc = new Scanner(System.in);
         try {
             do {
+                System.out.print(" >");
                 String line = sc.nextLine();
                 c = id.dispatch(line);
                 System.out.println(c.toString());

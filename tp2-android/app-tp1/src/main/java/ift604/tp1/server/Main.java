@@ -31,6 +31,7 @@ public class Main {
         });
         ExecutorService pool = Executors.newCachedThreadPool();
         MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, pool);
+        System.out.println("Starting server...");
         System.out.println(mg.start());
     }
 }
