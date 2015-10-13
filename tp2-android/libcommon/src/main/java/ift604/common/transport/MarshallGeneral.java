@@ -39,8 +39,8 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 			public Challenge func(SenderReceiver sr) {
 				active = Challenge.Success("Started");
 				while (active.isSuccess()) {
-					sr.receive(containerContainerClass).bind(new Func1<Tc, Maybe<Tup0>>() {
-						public Maybe<Tup0> func(final Tc a) {
+					sr.receive(containerContainerClass).bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
+						public Maybe<Tup0> func(final Receipt<Tc> a) {
 							pool.execute(new Runnable() {
 								@Override
 								public void run() {

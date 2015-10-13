@@ -1,7 +1,11 @@
 package ift604.common.dispatch;
 
-public interface Receiver <Ta> {
+import java.io.Serializable;
 
-	public abstract void receive(Ta c);
+import ift604.common.transport.Receipt;
+
+public interface Receiver <Ta extends Serializable> {
+
+	public abstract void receive(Receipt<Ta> c);
 
 }

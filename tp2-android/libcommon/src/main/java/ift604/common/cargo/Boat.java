@@ -1,4 +1,4 @@
-package ift604.common.transport;
+package ift604.common.cargo;
 
 import java.io.Serializable;
 

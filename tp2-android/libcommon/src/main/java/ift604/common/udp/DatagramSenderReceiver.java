@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import ift604.common.transport.Marshall;
+import ift604.common.transport.Receipt;
 import ift604.common.transport.SenderReceiver;
 
 public class DatagramSenderReceiver implements SenderReceiver {
@@ -50,14 +51,37 @@ public class DatagramSenderReceiver implements SenderReceiver {
 	}
 	
 	@Override
-	public <Ta extends Serializable> Maybe<Ta> receive(Class<Ta> ac) {
+	public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
 		byte[] buf = new byte[1024];
-		DatagramPacket dp = new DatagramPacket(buf, buf.length);
+		final DatagramPacket dp = new DatagramPacket(buf, buf.length);
 		try {
 			ds.receive(dp);
-			return Marshall.fromBytes(buf, ac);
+			return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
+				@Override
+				public Maybe<Receipt<Ta>> func(Ta a) {
+
+					final Receipt<Ta> receipt = new Receipt<Ta>(a, dp.getAddress(), dp.getPort(), new Func1<Ta, Challenge>() {
+						@Override
+						public Challenge func(Ta response) {
+							Maybe<byte[]> mbuf = Marshall.toBytes(response);
+							return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
+								public Challenge func(byte[] buf) {
+									dp.setData(buf);
+									try {
+										ds.send(dp);
+										return Challenge.Success("datagram packet reply sent");
+									} catch (IOException e) {
+										return Challenge.Failure(ExceptionExtension.stringnify(e));
+									}
+								}
+							});
+						}
+					});
+					return Maybe.Just(receipt, "received");
+				}
+			});
 		} catch (IOException e) {
-			return Maybe.<Ta>Nothing(ExceptionExtension.stringnify(e));
+			return Maybe.<Receipt<Ta>>Nothing(ExceptionExtension.stringnify(e));
 		}
 	}
 }

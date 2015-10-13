@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import gxt.common.Challenge;
 import gxt.common.Func1;
 import gxt.common.extension.ExceptionExtension;
-import ift604.common.transport.Boat;
+import ift604.common.cargo.Boat;
 import ift604.common.transport.Cargo;
 import ift604.common.transport.SenderReceiver;
 import ift604.common.udp.DatagramSenderReceiver;

@@ -11,7 +11,7 @@ public interface SenderReceiver {
 	public <Ta extends Serializable> Challenge send(Ta a,
 			InetAddress sendAddr, int sendPort);
 
-	public <Ta extends Serializable> Maybe<Ta> receive(Class<Ta> ac);
+	public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac);
 
 	public Maybe<SenderReceiver> start();
 
