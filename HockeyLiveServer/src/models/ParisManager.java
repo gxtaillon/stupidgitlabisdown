@@ -18,7 +18,7 @@ public class ParisManager {
 		return match.isFinished();
 	}
 	
-	public void addBet(User u, Team t, Double amount) throws InvalidParisException {
+	public synchronized void addBet(User u, Team t, Double amount) throws InvalidParisException {
 		if (match.getPeriod() > 2)
 			throw new InvalidParisException("Impossible de parier apres la deuxieme periode");
 		Paris p = new Paris(u, t, amount);
