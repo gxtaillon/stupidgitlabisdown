@@ -1,5 +1,8 @@
 package ift604.common.udp.server;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import ift604.common.dispatch.ContainerDispatcher;
 import ift604.common.dispatch.Dispatcher;
 import ift604.common.dispatch.Receiver;
@@ -20,7 +23,8 @@ public class Main {
 			}
 		});
 		SenderReceiver sr = new DatagramSenderReceiver(13370);
-		MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr);
+		ExecutorService pool = Executors.newCachedThreadPool();
+		MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, pool);
 		System.out.println(mg.start());
 	}
 
