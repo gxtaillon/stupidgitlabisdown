@@ -60,7 +60,8 @@ public class Main {
 
         InputDispatcher id = new InputDispatcher();
         id.addFactory("exit", new ExitCommandFactory());
-        id.addFactory("getBoat", new GetBoatCommandFactory(dsr));
+        id.addFactory("getBoat", new GetBoatCommandFactory(sr));
+        id.addFactory("getMatchList", new GetMarchListCommandFactory(sr));
         id.addFactory("countBoats", new CommandFactory() {
             @Override
             public Maybe<Command> make(TokenGroup group) {
