@@ -20,8 +20,8 @@ import ift604.common.udp.DatagramSenderReceiver;
 public class Main {
 
     public static void main(String[] args) {
+        Receiver sr = new DatagramSenderReceiver(13370);
         Dispatcher<Cargo> d = new ContainerDispatcher<Cargo>();
-        final Receiver sr = new DatagramSenderReceiver(13370);
         d.addReceiver(GetBoat.class, new Act1<Receipt<Cargo>>() {
             public void func(Receipt<Cargo> r) {
                 System.out.println("received GetBoat from " + r.getOriginAddress() + ":" + r.getOriginPort());

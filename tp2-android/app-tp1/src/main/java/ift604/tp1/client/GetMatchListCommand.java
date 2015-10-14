@@ -8,17 +8,16 @@ import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
-import ift604.common.cargo.GetBoat;
 import ift604.common.cargo.MatchList;
 import ift604.common.transport.Cargo;
-import ift604.common.transport.SenderReceiver;
+import ift604.common.transport.DatagramSender;
 
 public class GetMatchListCommand implements Command {
-	private SenderReceiver sr;
+	private DatagramSender sr;
 	private String host;
 	private int port;
 
-	public GetMatchListCommand(SenderReceiver sr, String host, int port) {
+	public GetMatchListCommand(DatagramSender sr, String host, int port) {
 		this.sr = sr;
 		this.host = host;
 		this.port = port;

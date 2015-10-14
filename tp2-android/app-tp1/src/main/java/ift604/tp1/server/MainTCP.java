@@ -25,24 +25,18 @@ import ift604.common.udp.DatagramSenderReceiver;
 public class MainTCP {
 
     public static void main(String[] args) {
-        Challenge result = Challenge.Maybe(StreamReceiver.newStreamSenderReceiver(13380),
-                new Func1<StreamReceiver, Challenge>() {
-                    @Override
-                    public Challenge func(StreamReceiver a) {
-                        Dispatcher<Cargo> d = new ContainerDispatcher<Cargo>();
-                        d.addReceiver(GetBoat.class, new Act1<Receipt<Cargo>>() {
-                            public void func(Receipt<Cargo> r) {
-                                System.out.println("received GetBoat from " + r.getOriginAddress() + ":" + r.getOriginPort());
-                                r.reply(new Cargo(0L, Boat.class, new Boat()));
+        StreamReceiver sr = new StreamReceiver(13380);
+        Dispatcher<Cargo> d = new ContainerDispatcher<Cargo>();
+        d.addReceiver(GetBoat.class, new Act1<Receipt<Cargo>>() {
+            public void func(Receipt<Cargo> r) {
+                System.out.println("received GetBoat over TCP from " + r.getOriginAddress() + ":" + r.getOriginPort());
+                r.reply(new Cargo(0L, Boat.class, new Boat()));
 
-                            }
-                        });
-                        ExecutorService pool = Executors.newCachedThreadPool();
-                        MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, a, pool);
-                        System.out.println("Starting TCP server...");
-                        return mg.start();
-                    }
-                });
-        System.out.println(result);
+            }
+        });
+        ExecutorService pool = Executors.newCachedThreadPool();
+        MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, pool);
+        System.out.println("Starting TCP server...");
+        System.out.println(mg.start());
     }
 }

@@ -60,8 +60,8 @@ public class Main {
 
         InputDispatcher id = new InputDispatcher();
         id.addFactory("exit", new ExitCommandFactory());
-        id.addFactory("getBoat", new GetBoatCommandFactory(sr));
-        id.addFactory("getMatchList", new GetMarchListCommandFactory(sr));
+        id.addFactory("getBoat", new GetBoatCommandFactory(dsr));
+        id.addFactory("getMatchList", new GetMarchListCommandFactory(dsr));
         id.addFactory("countBoats", new CommandFactory() {
             @Override
             public Maybe<Command> make(TokenGroup group) {
@@ -136,10 +136,10 @@ public class Main {
                                             });
                                 }
                             },
-                            "made GetBoat TCP command");
+                            "made getBoatTCP command");
                 } else {
                     return Maybe
-                            .<Command> Nothing("GetBoatTCP command expects no argument");
+                            .<Command> Nothing("getBoatTCP command expects no argument");
                 }
             }
         });
@@ -155,10 +155,10 @@ public class Main {
                                 return Maybe.<Object>Just(this, "asked marshall to stop");
                             }
                         },
-                        "made GetBoat TCP command");
+                        "made killTCP command");
                 } else {
                     return Maybe
-                            .<Command> Nothing("GetBoatTCP command expects no argument");
+                            .<Command> Nothing("killTCP command expects no argument");
                 }
             }
         });

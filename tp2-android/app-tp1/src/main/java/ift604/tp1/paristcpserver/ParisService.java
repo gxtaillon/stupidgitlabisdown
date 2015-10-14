@@ -1,7 +1,7 @@
 package ift604.tp1.paristcpserver;
 
-import ift604.tp1.models.ListeDesMatchs;
-import ift604.tp1.models.Match;
+import ift604.common.models.ListeDesMatchs;
+import ift604.common.models.Match;
 
 public class ParisService {
 	

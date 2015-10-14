@@ -8,17 +8,16 @@ import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
-import ift604.common.cargo.MatchList;
 import ift604.common.cargo.MatchStats;
 import ift604.common.transport.Cargo;
-import ift604.common.transport.SenderReceiver;
+import ift604.common.transport.DatagramSender;
 
 public class GetMatchStatsCommand implements Command {
-	private SenderReceiver sr;
+	private DatagramSender sr;
 	private String host;
 	private int port;
 
-	public GetMatchStatsCommand(SenderReceiver sr, String host, int port) {
+	public GetMatchStatsCommand(DatagramSender sr, String host, int port) {
 		this.sr = sr;
 		this.host = host;
 		this.port = port;
@@ -26,7 +25,7 @@ public class GetMatchStatsCommand implements Command {
 
 	public Maybe<Object> func() {
 		try {
-			Cargo c = new Cargo(0L, MatchStats.class, new MatchStats(ift604.common.models.ListeDesMatchs.getInstance()).getMatchList().getMatch(1));
+			Cargo c = new Cargo(0L, MatchStats.class, new MatchStats(ift604.common.models.ListeDesMatchs.getInstance().getMatch(1)));
 			System.out.println("debug: " + host + ":" + port);
 			Challenge sendResult = sr.send(c, InetAddress.getByName(host), port);
 			return Maybe.Challenge(sendResult, new Func1<String, Maybe<Object>>() {

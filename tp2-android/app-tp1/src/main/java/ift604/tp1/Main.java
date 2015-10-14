@@ -2,13 +2,13 @@ package ift604.tp1;
 
 import java.io.IOException;
 
-import ift604.tp1.models.InvalidParisException;
-import ift604.tp1.models.ListeDesMatchs;
-import ift604.tp1.models.Match;
-import ift604.tp1.models.ParisManager;
-import ift604.tp1.models.Team;
-import ift604.tp1.models.User;
-import ift604.tp1.models.Player;
+import ift604.common.models.InvalidParisException;
+import ift604.common.models.ListeDesMatchs;
+import ift604.common.models.Match;
+import ift604.common.models.ParisManager;
+import ift604.common.models.Team;
+import ift604.common.models.User;
+import ift604.common.models.Player;
 import ift604.tp1.paristcpserver.SoireeHockeyServer;
 
 public class Main {

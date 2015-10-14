@@ -24,23 +24,14 @@ public class StreamReceiver implements Receiver {
     ServerSocket ss;
     int listenPort;
 
-    private StreamReceiver() {}
-
-    public static Maybe<StreamReceiver> newStreamSenderReceiver(int listenPort) {
-        try {
-            StreamReceiver ssr = new StreamReceiver();
-            ssr.listenPort = listenPort;
-            ssr.ss = new ServerSocket(listenPort);
-            return Maybe.<StreamReceiver>Just(ssr, "created new StreamReceiver");
-        } catch (IOException e) {
-            return Maybe.<StreamReceiver>Nothing(ExceptionExtension.stringnify(e));
-        }
+    public StreamReceiver(int listenPort) {
+        this.listenPort = listenPort;
     }
 
     @Override
     public Maybe<Receiver> start() {
         try {
-            ss.bind(new InetSocketAddress("localhost", listenPort));
+            ss = new ServerSocket(listenPort);
             return Maybe.<Receiver>Just(this, "StreamReceiver ready");
         } catch (UnknownHostException e) {
             return Maybe.<Receiver>Nothing(ExceptionExtension.stringnify(e));
