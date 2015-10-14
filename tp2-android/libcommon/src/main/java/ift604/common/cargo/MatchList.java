@@ -16,4 +16,8 @@ public class MatchList implements Serializable {
         return ListeDeMatchs;
     }
 
+    public MatchList(ListeDesMatchs liste){
+        this.ListeDeMatchs = liste;
+    }
+
 }
