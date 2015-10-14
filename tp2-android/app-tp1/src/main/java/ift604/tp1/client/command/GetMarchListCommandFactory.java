@@ -1,4 +1,4 @@
-package ift604.tp1.client;
+package ift604.tp1.client.command;
 
 import gxt.common.Maybe;
 import gxt.common.lispite.Command;

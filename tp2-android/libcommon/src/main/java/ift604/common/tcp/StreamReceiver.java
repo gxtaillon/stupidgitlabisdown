@@ -43,6 +43,16 @@ public class StreamReceiver implements Receiver {
     }
 
     @Override
+    public Challenge stop() {
+        try {
+            ss.close();
+            return Challenge.Success("stopped");
+        } catch (IOException e) {
+            return Challenge.Failure(ExceptionExtension.stringnify(e));
+        }
+    }
+
+    @Override
     public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
         try {
             byte[] buf = new byte[1024];

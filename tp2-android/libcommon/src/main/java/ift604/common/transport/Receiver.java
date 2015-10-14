@@ -11,5 +11,5 @@ public interface Receiver {
 	public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac);
 
 	public Maybe<Receiver> start();
-
+	public Challenge stop();
 }

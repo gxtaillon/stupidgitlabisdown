@@ -25,16 +25,15 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 		this.active = Challenge.Failure("not started yet");
 	}
 	
-	public Challenge setActive(Challenge active) {
-		Challenge previous = this.active;
-		this.active = active;
-		return previous;
+	public Challenge stop() {
+		active = Challenge.Failure("asked to stop");
+		return receiver.stop();
 	}
 	
 	public Challenge start() {
 		return Challenge.Maybe(receiver.start(), new Func1<Receiver, Challenge>() {
 			public Challenge func(Receiver sr) {
-				active = Challenge.Success("Started");
+				active = Challenge.Success("started");
 				while (active.isSuccess()) {
 					sr.receive(containerContainerClass).bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
 						public Maybe<Tup0> func(final Receipt<Tc> a) {
@@ -50,9 +49,9 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 				}
 				pool.shutdown();
 				try {
-					if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+					if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
 						pool.shutdownNow();
-						if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+						if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
 							return Challenge.Failure("pool did not terminate properly");
 						}
 					}

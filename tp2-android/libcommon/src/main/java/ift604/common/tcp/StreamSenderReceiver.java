@@ -101,6 +101,16 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     }
 
     @Override
+    public Challenge stop() {
+        try {
+            socket.close();
+            return Challenge.Success("stopped");
+        } catch (IOException e) {
+            return Challenge.Failure(ExceptionExtension.stringnify(e));
+        }
+    }
+
+    @Override
     public <Ta extends Serializable> Challenge send(Ta a) {
         return applySend.func(a);
     }

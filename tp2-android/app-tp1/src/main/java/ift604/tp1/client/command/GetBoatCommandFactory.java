@@ -1,11 +1,10 @@
-package ift604.tp1.client;
+package ift604.tp1.client.command;
 
 import gxt.common.Maybe;
 import gxt.common.lispite.Command;
 import gxt.common.lispite.CommandFactory;
 import gxt.common.lispite.TokenGroup;
 import ift604.common.transport.DatagramSender;
-import ift604.common.transport.Receiver;
 
 public class GetBoatCommandFactory implements CommandFactory {
 	private DatagramSender sr;

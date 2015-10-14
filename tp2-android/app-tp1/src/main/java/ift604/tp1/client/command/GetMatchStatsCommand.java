@@ -1,4 +1,4 @@
-package ift604.tp1.client;
+package ift604.tp1.client.command;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

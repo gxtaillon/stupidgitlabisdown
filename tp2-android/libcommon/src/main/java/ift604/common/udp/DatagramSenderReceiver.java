@@ -50,6 +50,12 @@ public class DatagramSenderReceiver implements Receiver, DatagramSender {
 	}
 
 	@Override
+	public Challenge stop() {
+		ds.close();
+		return Challenge.Success("stopped");
+	}
+
+	@Override
 	public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
 		byte[] buf = new byte[1024];
 		final DatagramPacket dp = new DatagramPacket(buf, buf.length);
