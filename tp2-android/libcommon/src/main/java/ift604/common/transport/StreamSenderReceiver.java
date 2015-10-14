@@ -32,14 +32,18 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     protected Func1<Serializable, Challenge> applySend = new Func1<Serializable, Challenge>() {
         @Override
         public Challenge func(Serializable a) {
+            System.out.println("debug: ssr sending...");
             Maybe<byte[]> mbuf = Marshall.toBytes(a);
             return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
                 @Override
                 public Challenge func(byte[] a) {
                     try {
+                        System.out.println("debug: ssr writing...");
                         OutputStream os = socket.getOutputStream();
                         os.write(a);
                         os.flush();
+
+                        System.out.println("debug: ssr sent");
                         return Challenge.Success("socket packet sent");
                     } catch (IOException e) {
                         return Challenge.Failure(ExceptionExtension.stringnify(e));
@@ -114,13 +118,19 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     @Override
     public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
         try {
+
+            System.out.println("debug: ssr reading...");
             InputStream is = socket.getInputStream();
             byte[] buf = new byte[1024];
             is.read(buf);
+
+            System.out.println("debug: ssr mashalling...");
             return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
                 @Override
                 public Maybe<Receipt<Ta>> func(Ta a) {
                     Receipt<Ta> receipt = new Receipt<Ta>(a, socket.getInetAddress(), socket.getPort(), (Func1<Ta,Challenge>)applySend);
+
+                    System.out.println("debug: ssr received.");
                     return Maybe.Just(receipt, "received");
                 }
             });

@@ -11,11 +11,13 @@ public class ParisService {
 	
 	public void parier(Integer matchId, Integer userId, Double amount) {
 		Match m = ListeDesMatchs.getInstance().getMatch(matchId);
-		try {
+
+		/*try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 
 		}
+		//*/
 		System.out.println("debug: bet registered");
 	}
 	

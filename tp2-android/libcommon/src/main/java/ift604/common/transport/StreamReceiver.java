@@ -55,9 +55,15 @@ public class StreamReceiver implements Receiver {
     @Override
     public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
         try {
+
+            System.out.println("debug: sr accepting...");
             final Socket s = ss.accept();
+
+            System.out.println("debug: sr reading...");
             byte[] buf = new byte[s.getInputStream().available()];
             s.getInputStream().read(buf);
+
+            System.out.println("debug: sr marhsalling...");
             return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
                 @Override
                 public Maybe<Receipt<Ta>> func(Ta a) {
@@ -79,6 +85,8 @@ public class StreamReceiver implements Receiver {
                             });
                         }
                     });
+
+                    System.out.println("debug: sr received");
                     return Maybe.Just(receipt, "received");
                 }
             });
