@@ -1,4 +1,4 @@
-package ift604.common.tcp;
+package ift604.common.transport;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +12,6 @@ import gxt.common.Challenge;
 import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
-import ift604.common.transport.Marshall;
-import ift604.common.transport.Receipt;
-import ift604.common.transport.Receiver;
-import ift604.common.transport.StreamSender;
 
 /**
  * Created by taig1501 on 15-10-14.

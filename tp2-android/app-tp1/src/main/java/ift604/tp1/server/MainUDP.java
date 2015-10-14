@@ -12,12 +12,12 @@ import ift604.common.transport.Cargo;
 import ift604.common.transport.MarshallGeneral;
 import ift604.common.transport.Receipt;
 import ift604.common.transport.Receiver;
-import ift604.common.udp.DatagramSenderReceiver;
+import ift604.common.transport.DatagramSenderReceiver;
 
 /**
  * Created by taig1501 on 15-10-13.
  */
-public class Main {
+public class MainUDP {
 
     public static void main(String[] args) {
         Receiver sr = new DatagramSenderReceiver(13370);

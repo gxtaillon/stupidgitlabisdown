@@ -1,8 +1,6 @@
 package ift604.tp1.client;
 
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import gxt.common.Act1;
 import gxt.common.Func1;
@@ -14,18 +12,17 @@ import gxt.common.lispite.InputDispatcher;
 import gxt.common.lispite.TokenGroup;
 import gxt.common.lispite.wip.ExitCommandFactory;
 import ift604.common.dispatch.ContainerDispatcher;
-import ift604.common.dispatch.Dispatcher;
 import ift604.common.cargo.Boat;
-import ift604.common.tcp.StreamSenderReceiver;
 import ift604.common.transport.Cargo;
-import ift604.common.transport.MarshallGeneral;
 import ift604.common.transport.Receipt;
-import ift604.common.udp.DatagramSenderReceiver;
 import ift604.tp1.client.command.ConnectTCPCommandFactory;
 import ift604.tp1.client.command.GetBoatCommandFactory;
 import ift604.tp1.client.command.GetBoatTCPCommandFactory;
 import ift604.tp1.client.command.GetMarchListCommandFactory;
 import ift604.tp1.client.command.KillTCPCommandFactory;
+import ift604.tp1.client.command.KillUDPCommandFactory;
+import ift604.tp1.client.command.ListenUDPCommandFactory;
+import ift604.tp1.client.command.PutBetTCPCommandFactory;
 
 /**
  * Created by taig1501 on 15-10-13.
@@ -33,30 +30,23 @@ import ift604.tp1.client.command.KillTCPCommandFactory;
 public class Main {
     public static void main(String[] args) {
         final State currentState = new State();
-        final DatagramSenderReceiver dsr = new DatagramSenderReceiver(13371);
         currentState.setDispatcher(new ContainerDispatcher<Cargo>());
         currentState.getDispatcher().addReceiver(Boat.class, new Act1<Receipt<Cargo>>() {
             public void func(Receipt<Cargo> r) {
                 System.out.println("received Boat");
                 Cargo c = r.getPayload();
                 Boat b = (Boat) c.getContainer();
-                ++currentState.boatsReceived;
+                currentState.setBoatsReceived(currentState.getBoatsReceived() + 1);
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ExecutorService pool = Executors.newCachedThreadPool();
-                MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(
-                        Cargo.class, currentState.getDispatcher(), dsr, pool);
-                System.out.println(mg.start());
-            }
-        }).start();
+
 
         InputDispatcher id = new InputDispatcher();
         id.addFactory("exit", new ExitCommandFactory());
-        id.addFactory("getBoat", new GetBoatCommandFactory(dsr));
-        id.addFactory("getMatchList", new GetMarchListCommandFactory(dsr));
+        id.addFactory("listenUDP", new ListenUDPCommandFactory(currentState));
+        id.addFactory("killUDP", new KillUDPCommandFactory(currentState));
+        id.addFactory("getBoat", new GetBoatCommandFactory(currentState));
+        id.addFactory("getMatchList", new GetMarchListCommandFactory(currentState));
         id.addFactory("countBoats", new CommandFactory() {
             @Override
             public Maybe<Command> make(TokenGroup group) {
@@ -64,7 +54,7 @@ public class Main {
                     return Maybe.<Command>Just(new Command() {
                         @Override
                         public Maybe<Object> func() {
-                            return Maybe.<Object>Just(currentState.boatsReceived, "got this many boats");
+                            return Maybe.<Object>Just(currentState.getBoatsReceived(), "got this many boats");
                         }
                     }, "made countBoats command");
                 } else {
@@ -73,8 +63,9 @@ public class Main {
             }
         });
         id.addFactory("connectTCP", new ConnectTCPCommandFactory(currentState));
-        id.addFactory("getBoatTCP", new GetBoatTCPCommandFactory(currentState));
         id.addFactory("killTCP", new KillTCPCommandFactory(currentState));
+        id.addFactory("getBoatTCP", new GetBoatTCPCommandFactory(currentState));
+        id.addFactory("putBetTCP", new PutBetTCPCommandFactory(currentState));
         Maybe<Command> c;
         Scanner sc = new Scanner(System.in);
         try {

@@ -1,4 +1,4 @@
-package ift604.common.udp;
+package ift604.common.transport;
 
 import gxt.common.Challenge;
 import gxt.common.Func1;

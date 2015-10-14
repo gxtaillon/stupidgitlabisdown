@@ -1,4 +1,4 @@
-package ift604.common.tcp;
+package ift604.common.transport;
 
 import gxt.common.Challenge;
 import gxt.common.Func1;
@@ -55,8 +55,8 @@ public class StreamReceiver implements Receiver {
     @Override
     public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
         try {
-            byte[] buf = new byte[1024];
             final Socket s = ss.accept();
+            byte[] buf = new byte[s.getInputStream().available()];
             s.getInputStream().read(buf);
             return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
                 @Override

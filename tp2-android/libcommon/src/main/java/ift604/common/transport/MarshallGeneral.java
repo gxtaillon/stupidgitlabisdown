@@ -31,7 +31,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 	}
 	
 	public Challenge start() {
-		return Challenge.Maybe(receiver.start(), new Func1<Receiver, Challenge>() {
+        return Challenge.Maybe(receiver.start(), new Func1<Receiver, Challenge>() {
 			public Challenge func(Receiver sr) {
 				active = Challenge.Success("started");
 				while (active.isSuccess()) {

@@ -1,20 +1,24 @@
 package ift604.tp1.client;
 
 import ift604.common.dispatch.Dispatcher;
-import ift604.common.tcp.StreamSenderReceiver;
+import ift604.common.transport.StreamSenderReceiver;
 import ift604.common.transport.Cargo;
 import ift604.common.transport.MarshallGeneral;
+import ift604.common.transport.DatagramSenderReceiver;
 
 /**
  * Created by taig1501 on 15-10-13.
  */
 public class State {
-    public int boatsReceived;
+    protected int boatsReceived;
 
-    StreamSenderReceiver tcpSenderReceiver;
-    Thread tcpThread;
-    MarshallGeneral<Cargo> tcpMarshallGeneral;
-    Dispatcher<Cargo> dispatcher;
+    protected DatagramSenderReceiver udpSenderReceiver;
+    protected Thread udpThread;
+    protected MarshallGeneral<Cargo> udpMarshallGeneral;
+    protected StreamSenderReceiver tcpSenderReceiver;
+    protected Thread tcpThread;
+    protected MarshallGeneral<Cargo> tcpMarshallGeneral;
+    protected Dispatcher<Cargo> dispatcher;
 
     public int getBoatsReceived() {
         return boatsReceived;
@@ -22,6 +26,30 @@ public class State {
 
     public void setBoatsReceived(int boatsReceived) {
         this.boatsReceived = boatsReceived;
+    }
+
+    public DatagramSenderReceiver getUdpSenderReceiver() {
+        return udpSenderReceiver;
+    }
+
+    public void setUdpSenderReceiver(DatagramSenderReceiver udpSenderReceiver) {
+        this.udpSenderReceiver = udpSenderReceiver;
+    }
+
+    public Thread getUdpThread() {
+        return udpThread;
+    }
+
+    public void setUdpThread(Thread udpThread) {
+        this.udpThread = udpThread;
+    }
+
+    public MarshallGeneral<Cargo> getUdpMarshallGeneral() {
+        return udpMarshallGeneral;
+    }
+
+    public void setUdpMarshallGeneral(MarshallGeneral<Cargo> udpMarshallGeneral) {
+        this.udpMarshallGeneral = udpMarshallGeneral;
     }
 
     public StreamSenderReceiver getTcpSenderReceiver() {
