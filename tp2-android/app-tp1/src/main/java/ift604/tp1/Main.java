@@ -74,7 +74,6 @@ public class Main {
 		Bruins.addPlayer(new Player(50,"JONAS GUSTAVSSON"));
 		Bruins.addPlayer(new Player(40,"TUUKKA RASK"));
 
-
 		ListeDesMatchs liste = ListeDesMatchs.getInstance();
 		
 		Match match1 = new Match(Canadiens, Bruins);
