@@ -9,7 +9,11 @@ public class MatchStats implements Serializable {
 	private static final long serialVersionUID = 4089657874246736528L;
     private static Match match;
 
-    public Match getMatch(){
+    public MatchStats(Match match){
+        this.match = match;
+    }
+
+    public Match getMatchStats(){
         return match;
     }
 
