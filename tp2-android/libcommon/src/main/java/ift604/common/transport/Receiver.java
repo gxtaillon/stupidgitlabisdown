@@ -6,13 +6,10 @@ import gxt.common.Maybe;
 import java.io.Serializable;
 import java.net.InetAddress;
 
-public interface SenderReceiver {
-
-	public <Ta extends Serializable> Challenge send(Ta a,
-			InetAddress sendAddr, int sendPort);
+public interface Receiver {
 
 	public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac);
 
-	public Maybe<SenderReceiver> start();
+	public Maybe<Receiver> start();
 
 }

@@ -12,28 +12,17 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import ift604.common.transport.Marshall;
-import ift604.common.transport.Receipt;
-import ift604.common.transport.SenderReceiver;
+import ift604.common.transport.*;
+import ift604.common.transport.DatagramSender;
 
-public class DatagramSenderReceiver implements SenderReceiver {
+public class DatagramSenderReceiver implements Receiver, DatagramSender {
 	DatagramSocket ds;
 	int listenPort;
 	
 	public DatagramSenderReceiver(int listenPort) {
 		this.listenPort = listenPort;
 	}
-	
-	@Override
-	public Maybe<SenderReceiver> start() {
-		try {
-			ds = new DatagramSocket(listenPort);
-			return Maybe.<SenderReceiver>Just(this, "DatagramSenderReceiver ready");
-		} catch (SocketException e) {
-			return Maybe.<SenderReceiver>Nothing(ExceptionExtension.stringnify(e));
-		}
-	}
-	
+
 	@Override
 	public <Ta extends Serializable> Challenge send(Ta a, final InetAddress sendAddr, final int sendPort) {
 		Maybe<byte[]> mbuf = Marshall.toBytes(a);
@@ -50,6 +39,16 @@ public class DatagramSenderReceiver implements SenderReceiver {
 		});
 	}
 	
+	@Override
+	public Maybe<Receiver> start() {
+		try {
+			ds = new DatagramSocket(listenPort);
+			return Maybe.<Receiver>Just(this, "DatagramSenderReceiver ready");
+		} catch (SocketException e) {
+			return Maybe.<Receiver>Nothing(ExceptionExtension.stringnify(e));
+		}
+	}
+
 	@Override
 	public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
 		byte[] buf = new byte[1024];

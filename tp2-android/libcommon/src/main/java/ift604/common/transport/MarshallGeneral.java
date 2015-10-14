@@ -1,28 +1,25 @@
 package ift604.common.transport;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import gxt.common.Challenge;
 import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.Tup0;
-import gxt.common.extension.ExceptionExtension;
 import ift604.common.dispatch.ContainerContainer;
 import ift604.common.dispatch.Dispatcher;
 
 public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 	protected Dispatcher<Tc> dispatcher;
-	protected SenderReceiver senderReceiver;
+	protected Receiver receiver;
 	protected Class<Tc> containerContainerClass;
 	protected ExecutorService pool;
 	protected Challenge active;
-	public MarshallGeneral(Class<Tc> c, Dispatcher<Tc> dispatcher, SenderReceiver senderReceiver, ExecutorService pool) {
+	public MarshallGeneral(Class<Tc> c, Dispatcher<Tc> dispatcher, Receiver receiver, ExecutorService pool) {
 		this.dispatcher = dispatcher; 
-		this.senderReceiver = senderReceiver;
+		this.receiver = receiver;
 		this.containerContainerClass = c;
 		this.pool = pool;
 		this.active = Challenge.Failure("not started yet");
@@ -35,8 +32,8 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 	}
 	
 	public Challenge start() {
-		return Challenge.Maybe(senderReceiver.start(), new Func1<SenderReceiver, Challenge>() {
-			public Challenge func(SenderReceiver sr) {
+		return Challenge.Maybe(receiver.start(), new Func1<Receiver, Challenge>() {
+			public Challenge func(Receiver sr) {
 				active = Challenge.Success("Started");
 				while (active.isSuccess()) {
 					sr.receive(containerContainerClass).bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
@@ -44,7 +41,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 							pool.execute(new Runnable() {
 								@Override
 								public void run() {
-									dispatcher.receive(a);
+									dispatcher.dispatch(a);
 								}
 							});
 							return Maybe.<Tup0>Just(Tup0.Tup(), "done");
