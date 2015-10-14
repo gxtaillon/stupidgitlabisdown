@@ -10,14 +10,15 @@ import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
 import ift604.common.cargo.GetBoat;
 import ift604.common.transport.Cargo;
-import ift604.common.transport.SenderReceiver;
+import ift604.common.transport.DatagramSender;
+import ift604.common.transport.Receiver;
 
 public class GetBoatCommand implements Command {
-	private SenderReceiver sr;
+	private DatagramSender sr;
 	private String host;
 	private int port;
 
-	public GetBoatCommand(SenderReceiver sr, String host, int port) {
+	public GetBoatCommand(DatagramSender sr, String host, int port) {
 		this.sr = sr;
 		this.host = host;
 		this.port = port;

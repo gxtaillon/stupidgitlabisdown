@@ -4,12 +4,13 @@ import gxt.common.Maybe;
 import gxt.common.lispite.Command;
 import gxt.common.lispite.CommandFactory;
 import gxt.common.lispite.TokenGroup;
-import ift604.common.transport.SenderReceiver;
+import ift604.common.transport.DatagramSender;
+import ift604.common.transport.Receiver;
 
 public class GetBoatCommandFactory implements CommandFactory {
-	private SenderReceiver sr;
+	private DatagramSender sr;
 
-	public GetBoatCommandFactory(SenderReceiver sr) {
+	public GetBoatCommandFactory(DatagramSender sr) {
 		this.sr = sr;
 	}
 
