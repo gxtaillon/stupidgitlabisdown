@@ -60,7 +60,9 @@ public class StreamReceiver implements Receiver {
             final Socket s = ss.accept();
 
             System.out.println("debug: sr reading...");
-            byte[] buf = new byte[s.getInputStream().available()];
+            //byte[] buf = new byte[s.getInputStream().available()];
+            byte[] buf = new byte[1024];
+            System.out.println("debug: sr reading " + s.getInputStream().available() + "bytes...");
             s.getInputStream().read(buf);
 
             System.out.println("debug: sr marhsalling...");

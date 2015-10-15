@@ -37,7 +37,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 				while (active.isSuccess()) {
 
 					System.out.println("debug: mg receiving...");
-					sr.receive(containerContainerClass).bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
+					Maybe<Tup0> mr = sr.receive(containerContainerClass).bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
 						public Maybe<Tup0> func(final Receipt<Tc> a) {
 							pool.execute(new Runnable() {
 								@Override
@@ -48,6 +48,9 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 							return Maybe.<Tup0>Just(Tup0.Tup(), "done");
 						}
 					});
+					if (!mr.isJust()) {
+						return Challenge.Failure(mr.why());
+					}
 				}
 				pool.shutdown();
 				try {

@@ -39,6 +39,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
                 public Challenge func(byte[] a) {
                     try {
                         System.out.println("debug: ssr writing...");
+
                         OutputStream os = socket.getOutputStream();
                         os.write(a);
                         os.flush();
@@ -80,13 +81,14 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     }
 
     protected Maybe<StreamSenderReceiver> initCheck() {
-        if (socket.isConnected() && socket.isBound()) {
+        //if (socket.isConnected() && socket.isBound()) {
             return Maybe.<StreamSenderReceiver>Just(this, "init");
-        } else if (socket.isClosed()) {
+      /*  } else if (socket.isClosed()) {
             return Maybe.<StreamSenderReceiver>Nothing("socket is closed, can't start again");
         } else {
             return Maybe.<StreamSenderReceiver>Nothing("something is wrong with that socket");
         }
+        //*/
     }
 
     protected Maybe<StreamSenderReceiver> init() {
@@ -94,6 +96,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
             socket = new Socket();
             socket.bind(null);
             socket.connect(new InetSocketAddress(sendAddr, sendPort));
+            socket.setKeepAlive(true);
             return Maybe.<StreamSenderReceiver>Just(this, "StreamSenderReceiver ready");
         } catch (IOException e) {
             return Maybe.<StreamSenderReceiver>Nothing(ExceptionExtension.stringnify(e));
@@ -129,7 +132,6 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
                 @Override
                 public Maybe<Receipt<Ta>> func(Ta a) {
                     Receipt<Ta> receipt = new Receipt<Ta>(a, socket.getInetAddress(), socket.getPort(), (Func1<Ta,Challenge>)applySend);
-
                     System.out.println("debug: ssr received.");
                     return Maybe.Just(receipt, "received");
                 }
