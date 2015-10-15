@@ -57,8 +57,44 @@ public class StreamReceiver implements Receiver {
         }
     }
 
+    private <Ta extends Serializable> Func1<Ta, Challenge> getSendHandler(final Socket s) {
+        return new Func1<Ta, Challenge>() {
+            @Override
+            public Challenge func(Ta response) {
+                Maybe<byte[]> mbuf = Marshall.toBytes(response);
+                return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
+                    public Challenge func(byte[] buf) {
+                        try {
+                            OutputStream os = s.getOutputStream();
+                            os.write(buf);
+                            os.flush();
+                            return Challenge.Success("socket reply sent");
+                        } catch (IOException e) {
+                            return Challenge.Failure(ExceptionExtension.stringnify(e));
+                        }
+                    }
+                });
+            }
+        };
+    }
+
+    private Func0<Challenge> getCloseHandler(final Socket s) {
+        return new Func0<Challenge>() {
+            @Override
+            public Challenge func() {
+                try {
+                    s.close();
+                    return Challenge.Success("socket closed");
+                } catch (IOException e) {
+                    return Challenge.Failure(ExceptionExtension.stringnify(e));
+                }
+            }
+        };
+    }
+
     @Override
     public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
+        final StreamReceiver srThis = this;
         try {
             System.out.println("debug: sr accepting...");
             final Socket s = ss.accept();
@@ -71,7 +107,7 @@ public class StreamReceiver implements Receiver {
                             public Maybe<byte[]> func() {
                                 try {
                                     byte[] buf = new byte[1024];
-                                    System.out.println("debug: sr reading " + s.getInputStream().available() + "bytes...");
+                                    System.out.println("debug: sr reading...");
                                     s.getInputStream().read(buf);
                                     return Maybe.<byte[]>Just(buf, "read incoming");
                                 } catch (IOException e) {
@@ -82,27 +118,12 @@ public class StreamReceiver implements Receiver {
                             @Override
                             public Maybe<Receipt<Ta>> func(byte[] buf) {
                                 System.out.println("debug: sr marhsalling...");
+                                final Func1<Ta, Challenge> sendHandler = srThis.<Ta>getSendHandler(s);
+                                final Func0<Challenge> closeHandler = srThis.<Ta>getCloseHandler(s);
                                 return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
                                     @Override
                                     public Maybe<Receipt<Ta>> func(Ta a) {
-                                        final Receipt<Ta> receipt = new Receipt<Ta>(a, s.getInetAddress(), s.getPort(), new Func1<Ta, Challenge>() {
-                                            @Override
-                                            public Challenge func(Ta response) {
-                                                Maybe<byte[]> mbuf = Marshall.toBytes(response);
-                                                return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
-                                                    public Challenge func(byte[] buf) {
-                                                        try {
-                                                            OutputStream os = s.getOutputStream();
-                                                            os.write(buf);
-                                                            os.flush();
-                                                            return Challenge.Success("socket reply sent");
-                                                        } catch (IOException e) {
-                                                            return Challenge.Failure(ExceptionExtension.stringnify(e));
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        });
+                                        final Receipt<Ta> receipt = new Receipt<Ta>(a, s.getInetAddress(), s.getPort(), sendHandler, closeHandler);
 
                                         System.out.println("debug: sr received");
                                         return Maybe.Just(receipt, "received");

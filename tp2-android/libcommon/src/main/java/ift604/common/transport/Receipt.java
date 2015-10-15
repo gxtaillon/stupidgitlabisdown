@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 import gxt.common.Challenge;
+import gxt.common.Func0;
 import gxt.common.Func1;
 
 /**
@@ -14,12 +15,14 @@ public class Receipt <Ta extends Serializable> {
     protected InetAddress originAddress;
     protected int originPort;
     protected Func1<Ta, Challenge> reply;
+    protected Func0<Challenge> close;
 
-    public Receipt(Ta a, InetAddress oa, int op, Func1<Ta, Challenge> reply) {
-        this.payload = a;
-        this.originAddress = oa;
-        this.originPort = op;
+    public Receipt(Ta payload, InetAddress originAddress, int originPort, Func1<Ta, Challenge> reply, Func0<Challenge> close) {
+        this.payload = payload;
+        this.originAddress = originAddress;
+        this.originPort = originPort;
         this.reply = reply;
+        this.close = close;
     }
 
     public Ta getPayload() {
@@ -36,5 +39,9 @@ public class Receipt <Ta extends Serializable> {
 
     public Challenge reply(Ta a) {
         return this.reply.func(a);
+    }
+
+    public Challenge close() {
+        return this.close.func();
     }
 }

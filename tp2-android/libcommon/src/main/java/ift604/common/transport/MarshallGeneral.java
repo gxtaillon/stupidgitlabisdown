@@ -11,6 +11,7 @@ import gxt.common.Maybe;
 import gxt.common.MaybeBase;
 import gxt.common.Monad;
 import gxt.common.Tup0;
+import ift604.common.cargo.*;
 import ift604.common.dispatch.ContainerContainer;
 import ift604.common.dispatch.Dispatcher;
 
@@ -20,12 +21,19 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 	protected Class<Tc> containerContainerClass;
 	protected ExecutorService pool;
 	protected Challenge active;
-	public MarshallGeneral(Class<Tc> c, Dispatcher<Tc> dispatcher, Receiver receiver, ExecutorService pool) {
+	public MarshallGeneral(Class<Tc> c, Dispatcher<Tc> dispatcher, final Receiver receiver, ExecutorService pool) {
 		this.dispatcher = dispatcher; 
 		this.receiver = receiver;
 		this.containerContainerClass = c;
 		this.pool = pool;
 		this.active = Challenge.Failure("not started yet");
+
+        this.dispatcher.addReceiver(Shutdown.class, new Act1<Receipt<Tc>>() {
+            @Override
+            public void func(Receipt<Tc> receipt) {
+                System.out.println(receipt.close());
+            }
+        });
 	}
 	
 	public Challenge stop() {

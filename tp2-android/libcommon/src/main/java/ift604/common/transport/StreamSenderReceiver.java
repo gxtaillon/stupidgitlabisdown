@@ -31,7 +31,8 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
             return Maybe.<Receiver>Just(a, "init");
         }
     };
-    protected Func1<Serializable, Challenge> applySend = new Func1<Serializable, Challenge>() {
+
+    protected final Func1<Serializable, Challenge> sendHandler = new Func1<Serializable, Challenge>() {
         @Override
         public Challenge func(Serializable a) {
             System.out.println("debug: ssr sending...");
@@ -55,6 +56,19 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
             });
         }
     };
+
+    protected final Func0<Challenge> closeHandler = new Func0<Challenge>() {
+        @Override
+        public Challenge func() {
+            try {
+                socket.close();
+                return Challenge.Success("socket closed");
+            } catch (IOException e) {
+                return Challenge.Failure(ExceptionExtension.stringnify(e));
+            }
+        }
+    };
+
     protected Socket socket;
     protected InetAddress sendAddr;
     protected int sendPort;
@@ -117,7 +131,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
 
     @Override
     public <Ta extends Serializable> Challenge send(Ta a) {
-        return applySend.func(a);
+        return sendHandler.func(a);
     }
 
     @Override
@@ -146,7 +160,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
                             return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
                                 @Override
                                 public Maybe<Receipt<Ta>> func(Ta a) {
-                                    Receipt<Ta> receipt = new Receipt<Ta>(a, socket.getInetAddress(), socket.getPort(), (Func1<Ta, Challenge>) applySend);
+                                    Receipt<Ta> receipt = new Receipt<Ta>(a, socket.getInetAddress(), socket.getPort(), (Func1<Ta, Challenge>) sendHandler, closeHandler);
                                     System.out.println("debug: ssr received.");
                                     return Maybe.Just(receipt, "received");
                                 }
