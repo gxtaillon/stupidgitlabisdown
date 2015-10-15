@@ -11,6 +11,5 @@ import gxt.common.Maybe;
 public interface StreamSender {
 
     public <Ta extends Serializable> Challenge send(Ta a);
-
     public Maybe<StreamSender> connect();
 }

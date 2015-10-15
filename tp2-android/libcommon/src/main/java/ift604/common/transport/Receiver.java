@@ -12,6 +12,8 @@ import java.net.InetAddress;
 
 public interface Receiver {
 
+	public <Ta extends Serializable> Challenge sendClose(Ta a);
+	public boolean canAccept();
 	public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive);
 	public Maybe<Receiver> start();
 	public Challenge stop();

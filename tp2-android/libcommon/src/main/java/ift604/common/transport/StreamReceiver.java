@@ -20,6 +20,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import ift604.common.transport.Marshall;
 import ift604.common.transport.Receipt;
@@ -28,9 +32,11 @@ import ift604.common.transport.Receiver;
 public class StreamReceiver implements Receiver {
     ServerSocket ss;
     int listenPort;
+    HashSet<Socket> openSockets;
 
     public StreamReceiver(int listenPort) {
         this.listenPort = listenPort;
+        this.openSockets = new HashSet<>();
     }
 
     @Override
@@ -55,6 +61,15 @@ public class StreamReceiver implements Receiver {
         } catch (IOException e) {
             return Challenge.Failure(ExceptionExtension.stringnify(e));
         }
+    }
+
+    @Override
+    public <Ta extends Serializable> Challenge sendClose(Ta a) {
+        Iterator<Socket> it = openSockets.iterator();
+        while (it.hasNext()) {
+            getSendHandler(it.next()).func(a);
+        }
+        return Challenge.Success("tried to sendClose to every client");
     }
 
     private <Ta extends Serializable> Func1<Ta, Challenge> getSendHandler(final Socket s) {
@@ -83,6 +98,7 @@ public class StreamReceiver implements Receiver {
             @Override
             public Challenge func() {
                 try {
+                    openSockets.remove(s);
                     s.close();
                     return Challenge.Success("socket closed");
                 } catch (IOException e) {
@@ -93,11 +109,18 @@ public class StreamReceiver implements Receiver {
     }
 
     @Override
+    public boolean canAccept() {
+        return !ss.isClosed();
+    }
+
+
+    @Override
     public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
         final StreamReceiver srThis = this;
         try {
             System.out.println("debug: sr accepting...");
             final Socket s = ss.accept();
+            openSockets.add(s);
             return Maybe.<Act1<Class<Ta>>>Just(new Act1<Class<Ta>>() {
                 @Override
                 public void func(final Class<Ta> ac) {

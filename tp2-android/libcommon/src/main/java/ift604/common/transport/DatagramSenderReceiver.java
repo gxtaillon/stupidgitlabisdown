@@ -60,6 +60,11 @@ public class DatagramSenderReceiver implements Receiver, DatagramSender {
 		return Challenge.Success("stopped");
 	}
 
+    @Override
+    public <Ta extends Serializable> Challenge sendClose(Ta a) {
+        return Challenge.Success("\"closed\"");
+    }
+
     // requires new handler for each packet
     private <Ta extends Serializable> Func1<Ta, Challenge> getReplyHandler(final DatagramPacket dp) {
         return new Func1<Ta, Challenge>() {
@@ -89,7 +94,13 @@ public class DatagramSenderReceiver implements Receiver, DatagramSender {
             }
         };
     }
-	@Override
+
+    @Override
+    public boolean canAccept() {
+        return !ds.isClosed() && ds.isConnected();
+    }
+
+    @Override
 	public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
         final DatagramSenderReceiver dsrThis = this;
 		return Maybe.<Act1<Class<Ta>>>Just(new Act1<Class<Ta>>() {

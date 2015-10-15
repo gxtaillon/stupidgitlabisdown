@@ -4,8 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import gxt.common.Act1;
-import ift604.common.cargo.Boat;
-import ift604.common.cargo.GetBoat;
+import ift604.common.cargo.*;
 import ift604.common.dispatch.ContainerDispatcher;
 import ift604.common.dispatch.Dispatcher;
 import ift604.common.transport.Cargo;
@@ -30,7 +29,7 @@ public class MainUDP {
             }
         });
         ExecutorService pool = Executors.newCachedThreadPool();
-        MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, pool);
+        MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, pool, Shutdown.getShutdownCargo());
         System.out.println("Starting UDP server...");
         System.out.println(mg.start());
     }

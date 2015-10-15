@@ -1,7 +1,5 @@
 package ift604.tp1.client.command;
 
-import gxt.common.Challenge;
-import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
@@ -17,7 +15,6 @@ public class KillTCPCommand implements Command {
 	}
 
 	public Maybe<Object> func() {
-		state.getTcpSenderReceiver().send(new Cargo(0L, Shutdown.class, new Shutdown()));
 		state.getTcpMarshallGeneral().stop();
 		try {
 			state.getTcpThread().join(25000);

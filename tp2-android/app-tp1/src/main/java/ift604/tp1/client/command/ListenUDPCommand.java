@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 
 import gxt.common.Maybe;
 import gxt.common.lispite.Command;
+import ift604.common.cargo.*;
 import ift604.common.transport.Cargo;
 import ift604.common.transport.MarshallGeneral;
 import ift604.common.transport.DatagramSenderReceiver;
@@ -29,7 +30,7 @@ public class ListenUDPCommand implements Command {
             public void run() {
                 ExecutorService pool = Executors.newFixedThreadPool(1);
                 MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(
-                        Cargo.class, state.getDispatcher(), state.getUdpSenderReceiver(), pool);
+                        Cargo.class, state.getDispatcher(), state.getUdpSenderReceiver(), pool, Shutdown.getShutdownCargo());
                 System.out.println(mg.start());
             }
         }));

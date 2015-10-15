@@ -11,6 +11,11 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Marshall {
+	/**
+	 * Serializes a serializable instance into an array of bytes
+	 * @param a The instance to serialize
+	 * @return Just(byte[]) if the serialization suceeded or Nothing() otherwise
+	 */
 	public static <Ta extends Serializable> Maybe<byte[]> toBytes(Ta a) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos;
@@ -24,7 +29,14 @@ public class Marshall {
 			return Maybe.<byte[]>Nothing(ExceptionExtension.stringnify(e));
 		}
 	}
-	
+
+	/**
+	 * Deserializes an array of bytes into its corresponding instance
+	 * @param bytes The array of bytes containing the serialized instance
+	 * @param ac The expected class of the serialized instance
+	 * @param <Ta> The expected type of the serialized instance
+	 * @return Just(Ta) if the deserialization suceeded or Nothing() otherwise
+	 */
 	@SuppressWarnings("unchecked")
 	public static <Ta extends Serializable> Maybe<Ta> fromBytes(byte[] bytes, Class<Ta> ac) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);

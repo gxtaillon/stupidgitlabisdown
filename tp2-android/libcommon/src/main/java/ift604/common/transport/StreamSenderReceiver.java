@@ -72,6 +72,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     protected Socket socket;
     protected InetAddress sendAddr;
     protected int sendPort;
+    protected boolean canAccept;
 
     public StreamSenderReceiver(InetAddress sendAddr, int sendPort) {
         this.sendAddr = sendAddr;
@@ -97,14 +98,13 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     }
 
     protected Maybe<StreamSenderReceiver> initCheck() {
-        //if (socket.isConnected() && socket.isBound()) {
+        if (socket.isConnected() && socket.isBound()) {
             return Maybe.<StreamSenderReceiver>Just(this, "init");
-      /*  } else if (socket.isClosed()) {
+        } else if (socket.isClosed()) {
             return Maybe.<StreamSenderReceiver>Nothing("socket is closed, can't start again");
         } else {
             return Maybe.<StreamSenderReceiver>Nothing("something is wrong with that socket");
         }
-        //*/
     }
 
     protected Maybe<StreamSenderReceiver> init() {
@@ -113,6 +113,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
             socket.bind(null);
             socket.connect(new InetSocketAddress(sendAddr, sendPort));
             socket.setKeepAlive(true);
+            canAccept = true;
             return Maybe.<StreamSenderReceiver>Just(this, "StreamSenderReceiver ready");
         } catch (IOException e) {
             return Maybe.<StreamSenderReceiver>Nothing(ExceptionExtension.stringnify(e));
@@ -130,12 +131,22 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     }
 
     @Override
+    public <Ta extends Serializable> Challenge sendClose(Ta a) {
+        return sendHandler.func(a);
+    }
+    @Override
     public <Ta extends Serializable> Challenge send(Ta a) {
         return sendHandler.func(a);
     }
 
     @Override
+    public boolean canAccept() {
+        return canAccept;
+    }
+
+    @Override
     public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
+        canAccept = false;
         return Maybe.<Act1<Class<Ta>>>Just(new Act1<Class<Ta>>() {
             @Override
             public void func(final Class<Ta> ac) {

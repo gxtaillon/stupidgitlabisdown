@@ -9,6 +9,7 @@ import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
+import ift604.common.cargo.*;
 import ift604.common.transport.StreamSenderReceiver;
 import ift604.common.transport.Cargo;
 import ift604.common.transport.MarshallGeneral;
@@ -42,7 +43,7 @@ public class ConnectTCPCommand implements Command {
                         @Override
                         public void run() {
                             ExecutorService pool = Executors.newFixedThreadPool(1);
-                            state.setTcpMarshallGeneral(new MarshallGeneral<Cargo>(Cargo.class, state.getDispatcher(), state.getTcpSenderReceiver(), pool));
+                            state.setTcpMarshallGeneral(new MarshallGeneral<Cargo>(Cargo.class, state.getDispatcher(), state.getTcpSenderReceiver(), pool, Shutdown.getShutdownCargo()));
                             System.out.println(state.getTcpMarshallGeneral().start());
                         }
                     }));
