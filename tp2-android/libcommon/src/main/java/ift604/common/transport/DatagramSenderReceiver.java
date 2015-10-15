@@ -23,6 +23,7 @@ import ift604.common.transport.DatagramSender;
 public class DatagramSenderReceiver implements Receiver, DatagramSender {
 	DatagramSocket ds;
 	int listenPort;
+    boolean canAccept;
 	
 	public DatagramSenderReceiver(int listenPort) {
 		this.listenPort = listenPort;
@@ -48,6 +49,7 @@ public class DatagramSenderReceiver implements Receiver, DatagramSender {
 	public Maybe<Receiver> start() {
 		try {
 			ds = new DatagramSocket(listenPort);
+            canAccept = true;
 			return Maybe.<Receiver>Just(this, "DatagramSenderReceiver ready");
 		} catch (SocketException e) {
 			return Maybe.<Receiver>Nothing(ExceptionExtension.stringnify(e));
@@ -97,12 +99,13 @@ public class DatagramSenderReceiver implements Receiver, DatagramSender {
 
     @Override
     public boolean canAccept() {
-        return !ds.isClosed() && ds.isConnected();
+        return canAccept;
     }
 
     @Override
 	public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
         final DatagramSenderReceiver dsrThis = this;
+        canAccept = false;
 		return Maybe.<Act1<Class<Ta>>>Just(new Act1<Class<Ta>>() {
 			@Override
 			public void func(final Class<Ta> ac) {

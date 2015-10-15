@@ -28,8 +28,7 @@ public class MainUDP {
 
             }
         });
-        ExecutorService pool = Executors.newCachedThreadPool();
-        MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, pool, Shutdown.getShutdownCargo());
+        MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(Cargo.class, d, sr, Shutdown.getShutdownCargo());
         System.out.println("Starting UDP server...");
         System.out.println(mg.start());
     }

@@ -28,9 +28,9 @@ public class ListenUDPCommand implements Command {
         state.setUdpThread(new Thread(new Runnable() {
             @Override
             public void run() {
-                ExecutorService pool = Executors.newFixedThreadPool(1);
                 MarshallGeneral<Cargo> mg = new MarshallGeneral<Cargo>(
-                        Cargo.class, state.getDispatcher(), state.getUdpSenderReceiver(), pool, Shutdown.getShutdownCargo());
+                        Cargo.class, state.getDispatcher(), state.getUdpSenderReceiver(), Shutdown.getShutdownCargo());
+                state.setUdpMarshallGeneral(mg);
                 System.out.println(mg.start());
             }
         }));

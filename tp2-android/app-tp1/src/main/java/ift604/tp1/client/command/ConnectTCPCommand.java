@@ -42,8 +42,7 @@ public class ConnectTCPCommand implements Command {
                     state.setTcpThread(new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            ExecutorService pool = Executors.newFixedThreadPool(1);
-                            state.setTcpMarshallGeneral(new MarshallGeneral<Cargo>(Cargo.class, state.getDispatcher(), state.getTcpSenderReceiver(), pool, Shutdown.getShutdownCargo()));
+                            state.setTcpMarshallGeneral(new MarshallGeneral<Cargo>(Cargo.class, state.getDispatcher(), state.getTcpSenderReceiver(), Shutdown.getShutdownCargo()));
                             System.out.println(state.getTcpMarshallGeneral().start());
                         }
                     }));
