@@ -1,8 +1,13 @@
 package ift604.common.transport;
 
+import gxt.common.Act0;
+import gxt.common.Act1;
 import gxt.common.Challenge;
+import gxt.common.Func0;
 import gxt.common.Func1;
 import gxt.common.Maybe;
+import gxt.common.MaybeBase;
+import gxt.common.Monad;
 import gxt.common.extension.ExceptionExtension;
 
 import java.io.IOException;
@@ -53,47 +58,65 @@ public class StreamReceiver implements Receiver {
     }
 
     @Override
-    public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
+    public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
         try {
-
             System.out.println("debug: sr accepting...");
             final Socket s = ss.accept();
-
-            System.out.println("debug: sr reading...");
-            //byte[] buf = new byte[s.getInputStream().available()];
-            byte[] buf = new byte[1024];
-            System.out.println("debug: sr reading " + s.getInputStream().available() + "bytes...");
-            s.getInputStream().read(buf);
-
-            System.out.println("debug: sr marhsalling...");
-            return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
+            return Maybe.<Act1<Class<Ta>>>Just(new Act1<Class<Ta>>() {
                 @Override
-                public Maybe<Receipt<Ta>> func(Ta a) {
-                    final Receipt<Ta> receipt = new Receipt<Ta>(a, s.getInetAddress(), s.getPort(), new Func1<Ta, Challenge>() {
-                        @Override
-                        public Challenge func(Ta response) {
-                            Maybe<byte[]> mbuf = Marshall.toBytes(response);
-                            return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
-                                public Challenge func(byte[] buf) {
-                                    try {
-                                        OutputStream os = s.getOutputStream();
-                                        os.write(buf);
-                                        os.flush();
-                                        return Challenge.Success("socket reply sent");
-                                    } catch (IOException e) {
-                                        return Challenge.Failure(ExceptionExtension.stringnify(e));
-                                    }
+                public void func(final Class<Ta> ac) {
+                    while (!s.isClosed()) {
+                        Maybe<Receipt<Ta>> receiptMaybe = new Func0<Maybe<byte[]>>() {
+                            @Override
+                            public Maybe<byte[]> func() {
+                                try {
+                                    byte[] buf = new byte[1024];
+                                    System.out.println("debug: sr reading " + s.getInputStream().available() + "bytes...");
+                                    s.getInputStream().read(buf);
+                                    return Maybe.<byte[]>Just(buf, "read incoming");
+                                } catch (IOException e) {
+                                    return Maybe.Nothing(ExceptionExtension.stringnify(e));
                                 }
-                            });
-                        }
-                    });
+                            }
+                        }.func().bind(new Func1<byte[], Maybe<Receipt<Ta>>>() {
+                            @Override
+                            public Maybe<Receipt<Ta>> func(byte[] buf) {
+                                System.out.println("debug: sr marhsalling...");
+                                return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
+                                    @Override
+                                    public Maybe<Receipt<Ta>> func(Ta a) {
+                                        final Receipt<Ta> receipt = new Receipt<Ta>(a, s.getInetAddress(), s.getPort(), new Func1<Ta, Challenge>() {
+                                            @Override
+                                            public Challenge func(Ta response) {
+                                                Maybe<byte[]> mbuf = Marshall.toBytes(response);
+                                                return Challenge.Maybe(mbuf, new Func1<byte[], Challenge>() {
+                                                    public Challenge func(byte[] buf) {
+                                                        try {
+                                                            OutputStream os = s.getOutputStream();
+                                                            os.write(buf);
+                                                            os.flush();
+                                                            return Challenge.Success("socket reply sent");
+                                                        } catch (IOException e) {
+                                                            return Challenge.Failure(ExceptionExtension.stringnify(e));
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
 
-                    System.out.println("debug: sr received");
-                    return Maybe.Just(receipt, "received");
+                                        System.out.println("debug: sr received");
+                                        return Maybe.Just(receipt, "received");
+                                    }
+                                });
+                            }
+                        });
+
+                        onReceive.func(receiptMaybe);
+                    }
                 }
-            });
+            }, "accepted");
         } catch (IOException e) {
-            return Maybe.<Receipt<Ta>>Nothing(ExceptionExtension.stringnify(e));
+            return Maybe.<Act1<Class<Ta>>>Nothing(ExceptionExtension.stringnify(e));
         }
     }
 }

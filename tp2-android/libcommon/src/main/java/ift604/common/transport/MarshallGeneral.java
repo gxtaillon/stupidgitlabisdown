@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import gxt.common.Act1;
 import gxt.common.Challenge;
 import gxt.common.Func1;
 import gxt.common.Maybe;
+import gxt.common.MaybeBase;
+import gxt.common.Monad;
 import gxt.common.Tup0;
 import ift604.common.dispatch.ContainerContainer;
 import ift604.common.dispatch.Dispatcher;
@@ -37,19 +40,32 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 				while (active.isSuccess()) {
 
 					System.out.println("debug: mg receiving...");
-					Maybe<Tup0> mr = sr.receive(containerContainerClass).bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
-						public Maybe<Tup0> func(final Receipt<Tc> a) {
-							pool.execute(new Runnable() {
+					Maybe<Tup0> m = sr.accept(new Act1<Maybe<Receipt<Tc>>>() {
+						// onReceive
+						@Override
+						public void func(Maybe<Receipt<Tc>> receiptMaybe) {
+							receiptMaybe.bind(new Func1<Receipt<Tc>, Maybe<Tup0>>() {
 								@Override
-								public void run() {
-									dispatcher.dispatch(a);
+								public Maybe<Tup0> func(final Receipt<Tc> receipt) {
+									pool.execute(new Runnable() {
+										@Override
+										public void run() {
+											dispatcher.dispatch(receipt);
+										}
+									});
+									return Maybe.<Tup0>Just(Tup0.Tup(), "done");
 								}
 							});
-							return Maybe.<Tup0>Just(Tup0.Tup(), "done");
+						}
+					}).bind(new Func1<Act1<Class<Tc>>, Maybe<Tup0>>() {
+						@Override
+						public Maybe<Tup0> func(Act1<Class<Tc>> doReceive) {
+							doReceive.func(containerContainerClass);
+							return Maybe.Just(Tup0.Tup(), "accepted new client");
 						}
 					});
-					if (!mr.isJust()) {
-						return Challenge.Failure(mr.why());
+					if (!m.isJust()) {
+						return Challenge.Failure(m.why());
 					}
 				}
 				pool.shutdown();

@@ -8,7 +8,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import gxt.common.Act1;
 import gxt.common.Challenge;
+import gxt.common.Func0;
 import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
@@ -119,25 +121,42 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
     }
 
     @Override
-    public <Ta extends Serializable> Maybe<Receipt<Ta>> receive(Class<Ta> ac) {
-        try {
-
-            System.out.println("debug: ssr reading...");
-            InputStream is = socket.getInputStream();
-            byte[] buf = new byte[1024];
-            is.read(buf);
-
-            System.out.println("debug: ssr mashalling...");
-            return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
-                @Override
-                public Maybe<Receipt<Ta>> func(Ta a) {
-                    Receipt<Ta> receipt = new Receipt<Ta>(a, socket.getInetAddress(), socket.getPort(), (Func1<Ta,Challenge>)applySend);
-                    System.out.println("debug: ssr received.");
-                    return Maybe.Just(receipt, "received");
+    public <Ta extends Serializable> Maybe<Act1<Class<Ta>>> accept(final Act1<Maybe<Receipt<Ta>>> onReceive) {
+        return Maybe.<Act1<Class<Ta>>>Just(new Act1<Class<Ta>>() {
+            @Override
+            public void func(final Class<Ta> ac) {
+                while (!socket.isClosed()) {
+                    Maybe<Receipt<Ta>> receiptMaybe = new Func0<Maybe<byte[]>>() {
+                        @Override
+                        public Maybe<byte[]> func() {
+                            try {
+                                System.out.println("debug: ssr reading...");
+                                InputStream is = socket.getInputStream();
+                                byte[] buf = new byte[1024];
+                                is.read(buf);
+                                return Maybe.<byte[]>Just(buf, "read incoming");
+                            } catch (IOException e) {
+                                return Maybe.Nothing(ExceptionExtension.stringnify(e));
+                            }
+                        }
+                    }.func().bind(new Func1<byte[], Maybe<Receipt<Ta>>>() {
+                        @Override
+                        public Maybe<Receipt<Ta>> func(byte[] buf) {
+                            System.out.println("debug: ssr mashalling...");
+                            return Marshall.fromBytes(buf, ac).bind(new Func1<Ta, Maybe<Receipt<Ta>>>() {
+                                @Override
+                                public Maybe<Receipt<Ta>> func(Ta a) {
+                                    Receipt<Ta> receipt = new Receipt<Ta>(a, socket.getInetAddress(), socket.getPort(), (Func1<Ta, Challenge>) applySend);
+                                    System.out.println("debug: ssr received.");
+                                    return Maybe.Just(receipt, "received");
+                                }
+                            });
+                        }
+                    });
+                    onReceive.func(receiptMaybe);
                 }
-            });
-        } catch (IOException e) {
-            return Maybe.<Receipt<Ta>>Nothing(ExceptionExtension.stringnify(e));
-        }
+            }
+        }, "no accept to do");
+
     }
 }
