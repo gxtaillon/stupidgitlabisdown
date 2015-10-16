@@ -33,6 +33,15 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
     protected AtomicInteger taskCount;
     protected Semaphore handlers;
     protected AtomicInteger handlerCount;
+
+    /**
+     * Creates a new MarhsallGeneral for a specific container type.
+     * @param c Class of the container type
+     * @param dispatcher Dispatcher used to handle received container payloads
+     * @param receiver Receiver instance to be used for communications
+     * @param shutdownContainer Sentinel container and payload class used to trigger to signal the
+     *                          end of communication
+     */
 	public MarshallGeneral(Class<Tc> c, Dispatcher<Tc> dispatcher, final Receiver receiver, Tc shutdownContainer) {
 		this.dispatcher = dispatcher; 
 		this.receiver = receiver;
@@ -45,7 +54,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
         this.handlers = new Semaphore(0);
         this.handlerCount = new AtomicInteger(0);
 
-
+        // add the default receiver for the shutdown signal
         this.dispatcher.addReceiver(shutdownContainer.getContainerClass(), new Act1<Receipt<Tc>>() {
             @Override
             public void func(Receipt<Tc> receipt) {
@@ -53,6 +62,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
             }
         });
 
+        // properly stop the MarshallGeneral when the end times come
         final MarshallGeneral<Tc> mgThis = this;
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -95,7 +105,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
                             Challenge.Maybe(receiptMaybe, new Func1<Receipt<Tc>, Challenge>() {
                                 @Override
                                 public Challenge func(final Receipt<Tc> receipt) {
-                                    // keeptrack of how many tasks were started
+                                    // keeptrack of how many handlers were started
                                     handlerCount.incrementAndGet();
                                     pool.execute(new Runnable() {
                                         @Override
@@ -115,12 +125,14 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
                     }), new Func1<Act1<Class<Tc>>, Challenge>() {
                         @Override
                         public Challenge func(final Act1<Class<Tc>> doReceive) {
+                            // keeptrack of how many tasks were started
                             taskCount.incrementAndGet();
                             // once the client was accepted, start listening to its requests
                             pool.execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     doReceive.func(containerContainerClass);
+                                    // increment the semaphore counter once we're done
                                     tasks.release();
                                 }
                             });
@@ -129,8 +141,11 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
                     });
 				}
 				try {
+                    // wait for all tasks to complete
                     tasks.acquire(taskCount.get());
+                    // wait for all request handlers to complete
                     handlers.acquire(handlerCount.get());
+                    // safely shutdown the pool...
                     pool.shutdown();
 					if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
 						pool.shutdownNow();
@@ -138,7 +153,7 @@ public class MarshallGeneral <Tc extends ContainerContainer & Serializable> {
 							return Challenge.Failure("pool did not terminate properly");
 						}
 					}
-					return Challenge.Success("stopped gracefully");
+					return Challenge.Success("MarshallGeneral stopped gracefully");
 				} catch (InterruptedException ie) {
 					pool.shutdownNow();
 					Thread.currentThread().interrupt();

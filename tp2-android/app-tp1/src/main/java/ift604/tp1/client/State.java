@@ -2,7 +2,7 @@ package ift604.tp1.client;
 
 import ift604.common.dispatch.Dispatcher;
 import ift604.common.transport.StreamSenderReceiver;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
 import ift604.common.transport.MarshallGeneral;
 import ift604.common.transport.DatagramSenderReceiver;
 

@@ -1,12 +1,9 @@
 package ift604.tp1.client.command;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import gxt.common.Maybe;
 import gxt.common.lispite.Command;
 import ift604.common.cargo.*;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
 import ift604.common.transport.MarshallGeneral;
 import ift604.common.transport.DatagramSenderReceiver;
 import ift604.tp1.client.State;

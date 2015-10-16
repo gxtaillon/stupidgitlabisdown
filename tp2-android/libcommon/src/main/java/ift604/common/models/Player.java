@@ -1,6 +1,8 @@
 package ift604.common.models;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
 	
 	private int number;
 	private String name;

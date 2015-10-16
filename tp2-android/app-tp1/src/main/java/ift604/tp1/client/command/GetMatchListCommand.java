@@ -8,8 +8,8 @@ import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
-import ift604.common.cargo.MatchList;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
+import ift604.common.cargo.GetMatchList;
 import ift604.common.transport.DatagramSender;
 
 public class GetMatchListCommand implements Command {
@@ -25,7 +25,7 @@ public class GetMatchListCommand implements Command {
 
 	public Maybe<Object> func() {
 		try {
-			Cargo c = new Cargo(0L, MatchList.class, new MatchList(ift604.common.models.ListeDesMatchs.getInstance()));
+			Cargo c = new Cargo(0L, GetMatchList.class, new GetMatchList());
 			System.out.println("debug: " + host + ":" + port);
 			Challenge sendResult = sr.send(c, InetAddress.getByName(host), port);
 			return Maybe.Challenge(sendResult, new Func1<String, Maybe<Object>>() {

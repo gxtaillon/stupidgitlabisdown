@@ -1,6 +1,8 @@
 package ift604.common.models;
 
-public class Paris {
+import java.io.Serializable;
+
+public class Paris implements Serializable {
 	static Integer UNIQUE_ID = 0;
 	int id = ++UNIQUE_ID;
 

@@ -4,7 +4,7 @@ import gxt.common.Func1;
 import gxt.common.Maybe;
 import gxt.common.lispite.Command;
 import ift604.common.cargo.GetBoat;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
 import ift604.tp1.client.State;
 
 public class GetBoatTCPCommand implements Command {

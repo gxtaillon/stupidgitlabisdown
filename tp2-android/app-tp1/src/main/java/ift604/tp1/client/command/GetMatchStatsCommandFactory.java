@@ -6,10 +6,10 @@ import gxt.common.lispite.CommandFactory;
 import gxt.common.lispite.TokenGroup;
 import ift604.common.transport.DatagramSender;
 
-public class GetMarchStatsCommandFactory implements CommandFactory {
+public class GetMatchStatsCommandFactory implements CommandFactory {
 	private DatagramSender sr;
 
-	public GetMarchStatsCommandFactory(DatagramSender sr) {
+	public GetMatchStatsCommandFactory(DatagramSender sr) {
 		this.sr = sr;
 	}
 

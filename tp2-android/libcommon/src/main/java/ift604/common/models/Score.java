@@ -1,6 +1,8 @@
 package ift604.common.models;
 
-public class Score {
+import java.io.Serializable;
+
+public class Score implements Serializable {
 	private int home;
 	private int away;
 	

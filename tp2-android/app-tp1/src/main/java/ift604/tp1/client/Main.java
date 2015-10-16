@@ -13,12 +13,12 @@ import gxt.common.lispite.TokenGroup;
 import gxt.common.lispite.wip.ExitCommandFactory;
 import ift604.common.dispatch.ContainerDispatcher;
 import ift604.common.cargo.Boat;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
 import ift604.common.transport.Receipt;
 import ift604.tp1.client.command.ConnectTCPCommandFactory;
 import ift604.tp1.client.command.GetBoatCommandFactory;
 import ift604.tp1.client.command.GetBoatTCPCommandFactory;
-import ift604.tp1.client.command.GetMarchListCommandFactory;
+import ift604.tp1.client.command.GetMatchListCommandFactory;
 import ift604.tp1.client.command.KillTCPCommandFactory;
 import ift604.tp1.client.command.KillUDPCommandFactory;
 import ift604.tp1.client.command.ListenUDPCommandFactory;
@@ -46,7 +46,7 @@ public class Main {
         id.addFactory("listenUDP", new ListenUDPCommandFactory(currentState));
         id.addFactory("killUDP", new KillUDPCommandFactory(currentState));
         id.addFactory("getBoat", new GetBoatCommandFactory(currentState));
-        id.addFactory("getMatchList", new GetMarchListCommandFactory(currentState));
+        id.addFactory("getMatchList", new GetMatchListCommandFactory(currentState));
         id.addFactory("countBoats", new CommandFactory() {
             @Override
             public Maybe<Command> make(TokenGroup group) {

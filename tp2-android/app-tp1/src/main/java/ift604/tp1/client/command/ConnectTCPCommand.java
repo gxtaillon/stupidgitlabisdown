@@ -2,8 +2,6 @@ package ift604.tp1.client.command;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import gxt.common.Func1;
 import gxt.common.Maybe;
@@ -11,7 +9,7 @@ import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
 import ift604.common.cargo.*;
 import ift604.common.transport.StreamSenderReceiver;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
 import ift604.common.transport.MarshallGeneral;
 import ift604.common.transport.StreamSender;
 import ift604.tp1.client.State;

@@ -9,9 +9,8 @@ import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
 import ift604.common.cargo.GetBoat;
-import ift604.common.transport.Cargo;
+import ift604.common.cargo.Cargo;
 import ift604.common.transport.DatagramSender;
-import ift604.common.transport.Receiver;
 
 public class GetBoatCommand implements Command {
 	private DatagramSender sr;

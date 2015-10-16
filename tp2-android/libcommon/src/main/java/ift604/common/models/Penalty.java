@@ -1,6 +1,8 @@
 package ift604.common.models;
 
-public class Penalty extends MatchEvent {
+import java.io.Serializable;
+
+public class Penalty extends MatchEvent implements Serializable {
 	private String type;
 
 	public Penalty(Player p, Team t, String type) {

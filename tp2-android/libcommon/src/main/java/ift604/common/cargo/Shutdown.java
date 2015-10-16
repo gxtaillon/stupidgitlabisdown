@@ -2,8 +2,6 @@ package ift604.common.cargo;
 
 import java.io.Serializable;
 
-import ift604.common.transport.Cargo;
-
 public class Shutdown implements Serializable {
 	private Shutdown() {}
 	private static Shutdown instance = new Shutdown();

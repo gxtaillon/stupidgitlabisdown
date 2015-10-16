@@ -1,9 +1,10 @@
 package ift604.common.models;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Match {
+public class Match implements Serializable {
 	protected static final Integer PERIOD_TIME = 5000; //20 * 60 * 1000;
 	protected static final Integer INTERVAL = 1000; //30 * 1000;
 	protected static Integer ID_COUNT = 0;

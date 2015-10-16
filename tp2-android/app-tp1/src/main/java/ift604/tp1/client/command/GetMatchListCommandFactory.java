@@ -7,10 +7,10 @@ import gxt.common.lispite.TokenGroup;
 import ift604.common.transport.DatagramSender;
 import ift604.tp1.client.State;
 
-public class GetMarchListCommandFactory implements CommandFactory {
+public class GetMatchListCommandFactory implements CommandFactory {
 	private State state;
 
-	public GetMarchListCommandFactory(State state) {
+	public GetMatchListCommandFactory(State state) {
 		this.state = state;
 	}
 

@@ -1,7 +1,8 @@
 package ift604.common.models;
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class ListeDesMatchs {
+public class ListeDesMatchs implements Serializable {
 	private static ListeDesMatchs instance = null;
 	private HashMap<Integer, Match> matchs;
 

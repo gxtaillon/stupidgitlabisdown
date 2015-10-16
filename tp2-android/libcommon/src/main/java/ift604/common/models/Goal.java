@@ -1,5 +1,8 @@
 package ift604.common.models;
-public class Goal extends MatchEvent {
+
+import java.io.Serializable;
+
+public class Goal extends MatchEvent implements Serializable {
 
 	private Player assist;
 	private Player owner;

@@ -3,8 +3,6 @@ package ift604.tp1.client.command;
 import gxt.common.Maybe;
 import gxt.common.extension.ExceptionExtension;
 import gxt.common.lispite.Command;
-import ift604.common.cargo.*;
-import ift604.common.transport.Cargo;
 import ift604.tp1.client.State;
 
 public class KillTCPCommand implements Command {
