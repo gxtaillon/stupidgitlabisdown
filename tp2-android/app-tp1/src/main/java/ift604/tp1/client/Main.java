@@ -12,8 +12,9 @@ import gxt.common.lispite.InputDispatcher;
 import gxt.common.lispite.TokenGroup;
 import gxt.common.lispite.wip.ExitCommandFactory;
 import ift604.common.dispatch.ContainerDispatcher;
-import ift604.common.cargo.Boat;
+import ift604.common.models.Boat;
 import ift604.common.cargo.Cargo;
+import ift604.common.models.ListeDesMatchs;
 import ift604.common.transport.Receipt;
 import ift604.tp1.client.command.ConnectTCPCommandFactory;
 import ift604.tp1.client.command.GetBoatCommandFactory;
@@ -23,6 +24,7 @@ import ift604.tp1.client.command.KillTCPCommandFactory;
 import ift604.tp1.client.command.KillUDPCommandFactory;
 import ift604.tp1.client.command.ListenUDPCommandFactory;
 import ift604.tp1.client.command.PutBetTCPCommandFactory;
+import ift604.tp1.client.command.StartAutoGetMatchListCommandFactory;
 
 /**
  * Created by taig1501 on 15-10-13.
@@ -39,13 +41,20 @@ public class Main {
                 currentState.setBoatsReceived(currentState.getBoatsReceived() + 1);
             }
         });
-
+        currentState.getDispatcher().addReceiver(ListeDesMatchs.class, new Act1<Receipt<Cargo>>() {
+            @Override
+            public void func(Receipt<Cargo> a) {
+                System.out.println("received ListeDesMatchs");
+                Cargo c = a.getPayload();
+                currentState.setListeDesMatchs((ListeDesMatchs) c.getContainer());
+            }
+        });
 
         InputDispatcher id = new InputDispatcher();
         id.addFactory("exit", new ExitCommandFactory());
         id.addFactory("listenUDP", new ListenUDPCommandFactory(currentState));
         id.addFactory("killUDP", new KillUDPCommandFactory(currentState));
-        id.addFactory("getBoat", new GetBoatCommandFactory(currentState));
+        id.addFactory("getBoatUDP", new GetBoatCommandFactory(currentState));
         id.addFactory("getMatchList", new GetMatchListCommandFactory(currentState));
         id.addFactory("countBoats", new CommandFactory() {
             @Override
@@ -65,25 +74,20 @@ public class Main {
         id.addFactory("connectTCP", new ConnectTCPCommandFactory(currentState));
         id.addFactory("killTCP", new KillTCPCommandFactory(currentState));
         id.addFactory("getBoatTCP", new GetBoatTCPCommandFactory(currentState));
-        id.addFactory("putBetTCP", new PutBetTCPCommandFactory(currentState));
-        Maybe<Command> c;
-        Scanner sc = new Scanner(System.in);
-        try {
-            do {
-                System.out.print(" >");
-                String line = sc.nextLine();
-                c = id.dispatch(line);
-                System.out.println(c.toString());
-                c.fmap(new Func1<Command, Tup0>() {
-                    public Tup0 func(Command cmd) {
-                        System.out.println(cmd.func().toString());
-                        return Tup0.Tup();
-                    }
-                });
-            } while (true);
-        } finally {
-            sc.close();
-            System.out.println("bye");
-        }
+        id.addFactory("putBet", new PutBetTCPCommandFactory(currentState));
+        id.addFactory("startAutoUpdate", new StartAutoGetMatchListCommandFactory(currentState));
+        final Scanner sc = new Scanner(System.in);
+        do {
+            System.out.print(" >");
+            String line = sc.nextLine();
+            Maybe<Command> c = id.dispatch(line);
+            System.out.println(c.toString());
+            c.fmap(new Func1<Command, Tup0>() {
+                public Tup0 func(Command cmd) {
+                    System.out.println(cmd.func().toString());
+                    return Tup0.Tup();
+                }
+            });
+        } while (true);
     }
 }

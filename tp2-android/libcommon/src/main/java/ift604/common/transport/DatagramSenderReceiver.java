@@ -115,7 +115,7 @@ public class DatagramSenderReceiver implements Receiver, DatagramSender {
 						public Maybe<DatagramPacket> func() {
 							try {
 								System.out.println("debug: dsr reading...");
-                                final byte[] buf = new byte[1024];
+                                final byte[] buf = new byte[4096];
                                 final DatagramPacket dp = new DatagramPacket(buf, buf.length);
 								ds.receive(dp);
 								return Maybe.<DatagramPacket>Just(dp, "read incoming");

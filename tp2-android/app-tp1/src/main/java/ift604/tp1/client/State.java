@@ -1,6 +1,9 @@
 package ift604.tp1.client;
 
+import java.util.Timer;
+
 import ift604.common.dispatch.Dispatcher;
+import ift604.common.models.ListeDesMatchs;
 import ift604.common.transport.StreamSenderReceiver;
 import ift604.common.cargo.Cargo;
 import ift604.common.transport.MarshallGeneral;
@@ -9,9 +12,10 @@ import ift604.common.transport.DatagramSenderReceiver;
 /**
  * Created by taig1501 on 15-10-13.
  */
-public class State {
+public class State extends ift604.tp1.server.State {
     protected int boatsReceived;
-
+    protected ListeDesMatchs matchList;
+    protected Timer autoUpdateTimer;
     protected DatagramSenderReceiver udpSenderReceiver;
     protected Thread udpThread;
     protected MarshallGeneral<Cargo> udpMarshallGeneral;
@@ -26,6 +30,26 @@ public class State {
 
     public void setBoatsReceived(int boatsReceived) {
         this.boatsReceived = boatsReceived;
+    }
+
+    public ListeDesMatchs getListeDesMatchs() {
+        synchronized (matchList) {
+            return matchList;
+        }
+    }
+
+    public void setListeDesMatchs(ListeDesMatchs matchList) {
+        synchronized (matchList) {
+            this.matchList = matchList;
+        }
+    }
+
+    public Timer getAutoUpdateTimer() {
+        return autoUpdateTimer;
+    }
+
+    public void setAutoUpdateTimer(Timer autoUpdateTimer) {
+        this.autoUpdateTimer = autoUpdateTimer;
     }
 
     public DatagramSenderReceiver getUdpSenderReceiver() {

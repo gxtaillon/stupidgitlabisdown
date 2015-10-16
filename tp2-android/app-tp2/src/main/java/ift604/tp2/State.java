@@ -2,7 +2,7 @@ package ift604.tp2;
 
 import java.util.ArrayList;
 
-import ift604.common.cargo.Boat;
+import ift604.common.models.Boat;
 
 /**
  * Created by taig1501 on 15-10-13.

@@ -157,7 +157,7 @@ public class StreamSenderReceiver implements StreamSender, Receiver {
                             try {
                                 System.out.println("debug: ssr reading...");
                                 InputStream is = socket.getInputStream();
-                                byte[] buf = new byte[1024];
+                                byte[] buf = new byte[4096];
                                 is.read(buf);
                                 return Maybe.<byte[]>Just(buf, "read incoming");
                             } catch (IOException e) {

@@ -129,7 +129,7 @@ public class StreamReceiver implements Receiver {
                             @Override
                             public Maybe<byte[]> func() {
                                 try {
-                                    byte[] buf = new byte[1024];
+                                    byte[] buf = new byte[4096];
                                     System.out.println("debug: sr reading...");
                                     s.getInputStream().read(buf);
                                     return Maybe.<byte[]>Just(buf, "read incoming");

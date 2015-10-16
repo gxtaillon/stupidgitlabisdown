@@ -4,12 +4,8 @@ import gxt.common.Act1;
 import ift604.common.cargo.*;
 import ift604.common.dispatch.ContainerDispatcher;
 import ift604.common.dispatch.Dispatcher;
-import ift604.common.models.ListeDesMatchs;
-import ift604.common.models.Match;
-import ift604.common.models.ParisManager;
-import ift604.common.models.Player;
-import ift604.common.models.Team;
-import ift604.common.models.User;
+import ift604.common.models.*;
+import ift604.common.models.Boat;
 import ift604.common.service.ActService;
 import ift604.common.cargo.Cargo;
 import ift604.common.transport.DatagramSenderReceiver;
@@ -64,7 +60,7 @@ public class Main {
         d.addReceiver(GetMatchList.class, new Act1<Receipt<Cargo>>() {
             @Override
             public void func(Receipt<Cargo> r) {
-                System.out.println("received GetBoat over UDP from " + r.getOriginAddress() + ":" + r.getOriginPort());
+                System.out.println("received GetMatchList over UDP from " + r.getOriginAddress() + ":" + r.getOriginPort());
                 r.reply(new Cargo(0L, ListeDesMatchs.class, state.getListeDesMatchs()));
             }
         });

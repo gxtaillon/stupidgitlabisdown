@@ -26,7 +26,6 @@ public class GetMatchListCommand implements Command {
 	public Maybe<Object> func() {
 		try {
 			Cargo c = new Cargo(0L, GetMatchList.class, new GetMatchList());
-			System.out.println("debug: " + host + ":" + port);
 			Challenge sendResult = sr.send(c, InetAddress.getByName(host), port);
 			return Maybe.Challenge(sendResult, new Func1<String, Maybe<Object>>() {
 				@Override

@@ -1,4 +1,4 @@
-package ift604.common.cargo;
+package ift604.common.models;
 
 import java.io.Serializable;
 
